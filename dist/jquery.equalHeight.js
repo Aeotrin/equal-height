@@ -69,76 +69,78 @@ var _debounce2 = _interopRequireDefault(_debounce);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var groupElementsByTop = function groupElementsByTop(groups, element) {
-  var top = $(element).offset().top;
-  groups[top] = groups[top] || [];
-  groups[top].push(element);
-  return groups;
-};
+(function ($) {
+  var groupElementsByTop = function groupElementsByTop(groups, element) {
+    var top = $(element).offset().top;
+    groups[top] = groups[top] || [];
+    groups[top].push(element);
+    return groups;
+  };
 
-var groupElementsByZero = function groupElementsByZero(groups, element) {
-  groups[0] = groups[0] || [];
-  groups[0].push(element);
-  return groups;
-};
+  var groupElementsByZero = function groupElementsByZero(groups, element) {
+    groups[0] = groups[0] || [];
+    groups[0].push(element);
+    return groups;
+  };
 
-var clearHeight = function clearHeight(elements) {
-  return $(elements).css('height', 'auto');
-};
+  var clearHeight = function clearHeight(elements) {
+    return $(elements).css('height', 'auto');
+  };
 
-var getHeight = function getHeight(element) {
-  return $(element).height();
-};
+  var getHeight = function getHeight(element) {
+    return $(element).height();
+  };
 
-var applyMaxHeight = function applyMaxHeight(elements) {
-  var heights = elements.map(getHeight);
-  var maxHeight = Math.max.apply(null, heights);
-  $(elements).height(maxHeight);
-};
+  var applyMaxHeight = function applyMaxHeight(elements) {
+    var heights = elements.map(getHeight);
+    var maxHeight = Math.max.apply(null, heights);
+    $(elements).height(maxHeight);
+  };
 
-var equalizeHeights = function equalizeHeights(elements, groupByTop) {
-  // Sort into groups.
-  var groups = groupByTop ? elements.reduce(groupElementsByTop, {}) : elements.reduce(groupElementsByZero, {});
-  // Convert to arrays.
-  var groupsAsArray = Object.keys(groups).map(function (key) {
-    return groups[key];
-  });
-  // Apply max height.
-  groupsAsArray.forEach(clearHeight);
-  groupsAsArray.forEach(applyMaxHeight);
-};
+  var equalizeHeights = function equalizeHeights(elements, groupByTop) {
+    // Sort into groups.
+    var groups = groupByTop ? elements.reduce(groupElementsByTop, {}) : elements.reduce(groupElementsByZero, {});
+    // Convert to arrays.
+    var groupsAsArray = Object.keys(groups).map(function (key) {
+      return groups[key];
+    });
+    // Apply max height.
+    groupsAsArray.forEach(clearHeight);
+    groupsAsArray.forEach(applyMaxHeight);
+  };
 
-$.fn.equalHeight = function () {
-  var _ref = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+  $.fn.equalHeight = function () {
+    var _ref = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
-  var _ref$groupByTop = _ref.groupByTop;
-  var groupByTop = _ref$groupByTop === undefined ? false : _ref$groupByTop;
-  var _ref$resizeTimeout = _ref.resizeTimeout;
-  var resizeTimeout = _ref$resizeTimeout === undefined ? 20 : _ref$resizeTimeout;
-  var _ref$updateOnDOMReady = _ref.updateOnDOMReady;
-  var updateOnDOMReady = _ref$updateOnDOMReady === undefined ? true : _ref$updateOnDOMReady;
-  var _ref$updateOnDOMLoad = _ref.updateOnDOMLoad;
-  var updateOnDOMLoad = _ref$updateOnDOMLoad === undefined ? false : _ref$updateOnDOMLoad;
+    var _ref$groupByTop = _ref.groupByTop;
+    var groupByTop = _ref$groupByTop === undefined ? false : _ref$groupByTop;
+    var _ref$resizeTimeout = _ref.resizeTimeout;
+    var resizeTimeout = _ref$resizeTimeout === undefined ? 20 : _ref$resizeTimeout;
+    var _ref$updateOnDOMReady = _ref.updateOnDOMReady;
+    var updateOnDOMReady = _ref$updateOnDOMReady === undefined ? true : _ref$updateOnDOMReady;
+    var _ref$updateOnDOMLoad = _ref.updateOnDOMLoad;
+    var updateOnDOMLoad = _ref$updateOnDOMLoad === undefined ? false : _ref$updateOnDOMLoad;
 
-  // Convert to native array.
-  var elements = this.toArray();
-  // Handle resize event.
-  $(window).on('resize', (0, _debounce2.default)(function () {
-    equalizeHeights(elements, groupByTop);
-  }, resizeTimeout));
-  // Handle load event.
-  $(window).on('load', function () {
-    if (updateOnDOMLoad) {
+    // Convert to native array.
+    var elements = this.toArray();
+    // Handle resize event.
+    $(window).on('resize', (0, _debounce2.default)(function () {
       equalizeHeights(elements, groupByTop);
-    }
-  });
-  // Handle ready event.
-  $(document).on('ready', function () {
-    if (updateOnDOMReady) {
-      equalizeHeights(elements, groupByTop);
-    }
-  });
-  return this;
-};
+    }, resizeTimeout));
+    // Handle load event.
+    $(window).on('load', function () {
+      if (updateOnDOMLoad) {
+        equalizeHeights(elements, groupByTop);
+      }
+    });
+    // Handle ready event.
+    $(document).on('ready', function () {
+      if (updateOnDOMReady) {
+        equalizeHeights(elements, groupByTop);
+      }
+    });
+    return this;
+  };
+})(jQuery);
 
 },{"debounce":2}]},{},[3]);
